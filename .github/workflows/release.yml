@@ -1,0 +1,105 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  # ─────────────────────────────────────────────
+  #  Build release artifacts (libhapi_c.so + headers)
+  # ─────────────────────────────────────────────
+  release-linux:
+    name: "Build release artifacts (Linux x86_64)"
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends cmake ninja-build gcc g++
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Configure
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DHAPI_BUILD_EXAMPLES=ON \
+            -DHAPI_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --parallel $(nproc)
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Package release archive
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          DIST="hapi-${VERSION}-linux-x86_64"
+          mkdir -p "${DIST}/lib" "${DIST}/include" "${DIST}/bin"
+
+          # Library
+          cp build/libhapi_c.so "${DIST}/lib/"
+
+          # Public C header
+          cp Bindings/c/include/hapi_c.h "${DIST}/include/"
+
+          # C++ headers (Core + System + Application + Services)
+          cp -r Core/include/HAPI "${DIST}/include/"
+          cp -r System/include/HAPI/system "${DIST}/include/HAPI/"
+          cp -r Application/include/HAPI/application "${DIST}/include/HAPI/"
+          cp -r Services/include/HAPI/services "${DIST}/include/HAPI/"
+
+          # Python SDK
+          mkdir -p "${DIST}/sdk/python"
+          cp Bindings/python/hapi/__init__.py "${DIST}/sdk/python/"
+
+          # Lua SDK
+          mkdir -p "${DIST}/sdk/lua"
+          cp Bindings/lua/hapi.lua "${DIST}/sdk/lua/"
+
+          # TypeScript SDK
+          mkdir -p "${DIST}/sdk/typescript"
+          cp -r Bindings/typescript/src "${DIST}/sdk/typescript/"
+          cp Bindings/typescript/package.json "${DIST}/sdk/typescript/"
+          cp Bindings/typescript/tsconfig.json "${DIST}/sdk/typescript/"
+
+          # Docs & license
+          cp README.md LICENSE "${DIST}/"
+          cp -r Documentation "${DIST}/"
+
+          tar -czf "${DIST}.tar.gz" "${DIST}"
+          echo "ARCHIVE=${DIST}.tar.gz" >> "$GITHUB_ENV"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "HAPI ${{ github.ref_name }}"
+          body: |
+            ## API-on-Hyggshi-OS ${{ github.ref_name }}
+
+            ### What's included
+            - `libhapi_c.so` — Public C ABI shared library
+            - `include/` — C++ and C headers
+            - `sdk/python/` — Python SDK (`ctypes`, no external packages)
+            - `sdk/lua/` — LuaJIT SDK (`ffi`)
+            - `sdk/typescript/` — TypeScript/Node.js SDK
+            - `Documentation/` — Full API reference and guides
+
+            ### Quick links
+            - [Getting Started](Documentation/getting-started.md)
+            - [Architecture](Documentation/architecture.md)
+            - [Security Model](Documentation/security.md)
+          files: ${{ env.ARCHIVE }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}

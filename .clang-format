@@ -1,0 +1,76 @@
+---
+Language: Cpp
+BasedOnStyle: Google
+Standard: c++20
+
+# Indentation
+IndentWidth: 4
+ContinuationIndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# Braces
+BreakBeforeBraces: Attach
+
+# Column limit
+ColumnLimit: 100
+
+# Include sorting
+SortIncludes: CaseInsensitive
+IncludeBlocks: Regroup
+IncludeCategories:
+  # HAPI own headers
+  - Regex: '^<HAPI/'
+    Priority: 1
+  # hapi_c public C header
+  - Regex: '^<hapi_c\.h>'
+    Priority: 2
+  # C++ standard library
+  - Regex: '^<[a-z_]+>'
+    Priority: 3
+  # C standard library
+  - Regex: '^<[a-z_]+\.h>'
+    Priority: 4
+  # System / POSIX headers
+  - Regex: '^<(sys|netinet|arpa|linux)/'
+    Priority: 5
+  # Local headers
+  - Regex: '^"'
+    Priority: 6
+
+# Alignment
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignTrailingComments: true
+
+# Spaces
+SpaceAfterCStyleCast: false
+SpaceBeforeParens: ControlStatements
+SpacesInAngles: Never
+SpacesInContainerLiterals: false
+
+# Pointers / references
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# Line breaks
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+BinPackArguments: false
+BinPackParameters: false
+
+# Namespace
+NamespaceIndentation: None
+CompactNamespaces: false
+
+# Constructor initializers
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerIndentWidth: 4
+
+# Template
+AlwaysBreakTemplateDeclarations: Yes
+
+# Comments
+ReflowComments: false

@@ -1,0 +1,175 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────
+  #  C++ Build & Test (matrix: GCC / Clang × Debug / Release)
+  # ─────────────────────────────────────────────
+  build-and-test:
+    name: "C++ (${{ matrix.compiler }}, ${{ matrix.build_type }})"
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+        build_type: [Debug, Release]
+
+    env:
+      CC:  ${{ matrix.compiler == 'gcc' && 'gcc'   || 'clang'   }}
+      CXX: ${{ matrix.compiler == 'gcc' && 'g++'   || 'clang++' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build \
+            gcc g++ \
+            clang \
+            libstdc++-14-dev
+
+      - name: Configure
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DHAPI_BUILD_EXAMPLES=ON \
+            -DHAPI_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --parallel $(nproc)
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure --parallel $(nproc)
+
+      - name: Smoke-test examples
+        run: |
+          ./build/os_info_example
+          ./build/system_overview_example
+          ./build/c_sdk_example
+          ./build/file_security_notification_example
+          ./build/network_software_services_example
+
+      - name: Upload test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: build/Testing/
+
+  # ─────────────────────────────────────────────
+  #  Python SDK
+  # ─────────────────────────────────────────────
+  python-sdk:
+    name: "Python SDK (${{ matrix.python-version }})"
+    runs-on: ubuntu-24.04
+    needs: build-and-test
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends cmake ninja-build gcc g++
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Build libhapi_c.so
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DHAPI_BUILD_EXAMPLES=OFF -DHAPI_BUILD_TESTS=OFF
+          cmake --build build --target hapi_c --parallel $(nproc)
+
+      - name: Run Python SDK test
+        run: python3 Bindings/python/test_hapi.py
+
+  # ─────────────────────────────────────────────
+  #  LuaJIT SDK
+  # ─────────────────────────────────────────────
+  lua-sdk:
+    name: "LuaJIT SDK"
+    runs-on: ubuntu-24.04
+    needs: build-and-test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends cmake ninja-build gcc g++ luajit
+
+      - name: Build libhapi_c.so
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DHAPI_BUILD_EXAMPLES=OFF -DHAPI_BUILD_TESTS=OFF
+          cmake --build build --target hapi_c --parallel $(nproc)
+
+      - name: Run LuaJIT SDK test
+        run: luajit Bindings/lua/test_hapi.lua
+
+  # ─────────────────────────────────────────────
+  #  TypeScript / Node.js SDK
+  # ─────────────────────────────────────────────
+  typescript-sdk:
+    name: "TypeScript SDK (Node ${{ matrix.node-version }})"
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["20", "22"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Run TypeScript/Node.js SDK test (pure /proc adapter, no native build needed)
+        run: node Bindings/typescript/test_hapi_node.mjs
+
+  # ─────────────────────────────────────────────
+  #  C ABI header validation (compile as C)
+  # ─────────────────────────────────────────────
+  c-header-check:
+    name: "C ABI header check"
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate hapi_c.h compiles as C99 and C11
+        run: |
+          echo "#include \"Bindings/c/include/hapi_c.h\"" > /tmp/hapi_c_check.c
+          gcc -std=c99  -fsyntax-only -I. /tmp/hapi_c_check.c
+          gcc -std=c11  -fsyntax-only -I. /tmp/hapi_c_check.c
+          gcc -std=c17  -fsyntax-only -I. /tmp/hapi_c_check.c
+          echo "C header validation passed."
