@@ -10,16 +10,16 @@ namespace hyggshios::system {
 
 /// Graphics adapter metadata from /sys/class/drm.
 struct GpuDevice {
-    std::string card;      ///< e.g., "card0"
-    std::string vendor_id; ///< PCI vendor hex (e.g., "0x8086")
-    std::string device_id; ///< PCI device hex (e.g., "0x9a49")
-    std::string driver;    ///< Kernel driver name (e.g., "i915", "amdgpu", "nvidia")
+    std::string card;       ///< e.g., "card0"
+    std::string vendor_id;  ///< PCI vendor hex (e.g., "0x8086")
+    std::string device_id;  ///< PCI device hex (e.g., "0x9a49")
+    std::string driver;     ///< Kernel driver name (e.g., "i915", "amdgpu", "nvidia")
 };
 
 /// Battery power supply status from /sys/class/power_supply.
 struct BatteryInfo {
-    std::string name;           ///< e.g., "BAT0"
-    std::string status;         ///< "Charging", "Discharging", "Full", "Not charging"
+    std::string name;    ///< e.g., "BAT0"
+    std::string status;  ///< "Charging", "Discharging", "Full", "Not charging"
     std::uint32_t capacity_pct{0};
     bool present{false};
 };
@@ -33,8 +33,8 @@ struct AudioDevice {
 
 /// Display connector metadata from /sys/class/drm.
 struct DisplayOutput {
-    std::string connector; ///< e.g., "card0-eDP-1", "card0-HDMI-A-1"
-    std::string status;    ///< "connected" or "disconnected"
+    std::string connector;  ///< e.g., "card0-eDP-1", "card0-HDMI-A-1"
+    std::string status;     ///< "connected" or "disconnected"
     bool enabled{false};
 };
 
@@ -61,7 +61,7 @@ struct SensorReading {
     std::string chip;
     std::string label;
     double value{0.0};
-    std::string unit; ///< e.g., "C", "RPM", "V"
+    std::string unit;  ///< e.g., "C", "RPM", "V"
 };
 
 [[nodiscard]] core::Result<std::vector<GpuDevice>> try_get_gpu_devices();
@@ -72,6 +72,6 @@ struct SensorReading {
 [[nodiscard]] core::Result<std::vector<PciDevice>> try_get_pci_devices();
 [[nodiscard]] core::Result<std::vector<SensorReading>> try_get_sensor_readings();
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system
 
 namespace hyggshi = hyggshios;

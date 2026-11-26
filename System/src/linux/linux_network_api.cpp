@@ -1,19 +1,24 @@
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 #include <HAPI/system/network_api.hpp>
 
-#include <arpa/inet.h>
+#include <array>
+#include <charconv>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <ifaddrs.h>
-#include <net/if.h>
-#include <netinet/in.h>
 #include <sstream>
 #include <string>
-#include <sys/socket.h>
 #include <unordered_map>
+
+#include <ifaddrs.h>
+
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
+#include "linux_common.hpp"
+
+#include <net/if.h>
 
 namespace hyggshios::system::network {
 
@@ -29,34 +34,42 @@ std::string decode_hex_ipv4(const std::string& hex_ip) {
         return {};
     }
     unsigned int val = 0;
-    if (std::sscanf(hex_ip.c_str(), "%x", &val) != 1) {
+    const auto [ptr, ec] = std::from_chars(hex_ip.data(), hex_ip.data() + hex_ip.size(), val, 16);
+    if (ec != std::errc{} || ptr != hex_ip.data() + hex_ip.size()) {
         return {};
     }
     struct in_addr addr{};
     addr.s_addr = val;
     char buf[INET_ADDRSTRLEN]{};
     if (::inet_ntop(AF_INET, &addr, buf, sizeof(buf)) != nullptr) {
-        return std::string(buf);
+        return {buf};
     }
     return {};
 }
 
 std::string decode_tcp_state(const std::string& hex_state) {
-    if (hex_state == "01") return "ESTABLISHED";
-    if (hex_state == "02") return "SYN_SENT";
-    if (hex_state == "03") return "SYN_RECV";
-    if (hex_state == "04") return "FIN_WAIT1";
-    if (hex_state == "05") return "FIN_WAIT2";
-    if (hex_state == "06") return "TIME_WAIT";
-    if (hex_state == "07") return "CLOSE";
-    if (hex_state == "08") return "CLOSE_WAIT";
-    if (hex_state == "09") return "LAST_ACK";
-    if (hex_state == "0A") return "LISTEN";
-    if (hex_state == "0B") return "CLOSING";
+    static constexpr std::array<std::pair<const char*, const char*>, 11> kStates = {{
+        {"01", "ESTABLISHED"},
+        {"02", "SYN_SENT"},
+        {"03", "SYN_RECV"},
+        {"04", "FIN_WAIT1"},
+        {"05", "FIN_WAIT2"},
+        {"06", "TIME_WAIT"},
+        {"07", "CLOSE"},
+        {"08", "CLOSE_WAIT"},
+        {"09", "LAST_ACK"},
+        {"0A", "LISTEN"},
+        {"0B", "CLOSING"},
+    }};
+    for (const auto& [code, name] : kStates) {
+        if (hex_state == code) {
+            return name;
+        }
+    }
     return hex_state;
 }
 
-} // namespace
+}  // namespace
 
 core::Result<std::vector<NetworkInterface>> try_get_interfaces() {
     if (!core::has_permission(core::Permission::NetworkInfoRead)) {
@@ -191,7 +204,7 @@ core::Result<std::vector<NetworkConnection>> try_get_connections() {
     std::vector<NetworkConnection> conns;
     std::istringstream iss(content);
     std::string line;
-    std::getline(iss, line); // skip header
+    std::getline(iss, line);  // skip header
     while (std::getline(iss, line)) {
         std::istringstream lss(line);
         std::string sl;
@@ -207,8 +220,11 @@ core::Result<std::vector<NetworkConnection>> try_get_connections() {
                 return;
             }
             ip = decode_hex_ipv4(ep.substr(0, colon));
+            const std::string port_hex = ep.substr(colon + 1);
             unsigned int p = 0;
-            if (std::sscanf(ep.substr(colon + 1).c_str(), "%x", &p) == 1) {
+            const auto [ptr, ec] =
+                std::from_chars(port_hex.data(), port_hex.data() + port_hex.size(), p, 16);
+            if (ec == std::errc{}) {
                 port = static_cast<std::uint16_t>(p);
             }
         };
@@ -242,8 +258,8 @@ core::Result<std::vector<WifiInfo>> try_get_wifi_info() {
 
     std::istringstream iss(content);
     std::string line;
-    std::getline(iss, line); // header 1
-    std::getline(iss, line); // header 2
+    std::getline(iss, line);  // header 1
+    std::getline(iss, line);  // header 2
     while (std::getline(iss, line)) {
         const std::size_t colon = line.find(':');
         if (colon == std::string::npos) {
@@ -304,8 +320,8 @@ core::Result<std::vector<InterfaceStats>> try_get_statistics() {
     std::vector<InterfaceStats> stats;
     std::istringstream iss(content);
     std::string line;
-    std::getline(iss, line); // header 1
-    std::getline(iss, line); // header 2
+    std::getline(iss, line);  // header 1
+    std::getline(iss, line);  // header 2
     while (std::getline(iss, line)) {
         const std::size_t colon = line.find(':');
         if (colon == std::string::npos) {
@@ -324,4 +340,4 @@ core::Result<std::vector<InterfaceStats>> try_get_statistics() {
     return core::Result<std::vector<InterfaceStats>>::success(std::move(stats));
 }
 
-} // namespace hyggshios::system::network
+}  // namespace hyggshios::system::network

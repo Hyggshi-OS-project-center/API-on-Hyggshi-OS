@@ -5,8 +5,10 @@
 #include <cstdlib>
 #include <filesystem>
 #include <string>
-#include <sys/wait.h>
+
 #include <unistd.h>
+
+#include <sys/wait.h>
 
 namespace hyggshios::application {
 
@@ -47,9 +49,17 @@ core::Result<bool> send_notification(const NotificationRequest& request) {
                 urgency_str = "critical";
             }
             const std::string timeout_str = std::to_string(request.timeout_ms);
-            ::execl("/usr/bin/notify-send", "notify-send", "-a", request.app_name.c_str(), "-u",
-                    urgency_str, "-t", timeout_str.c_str(), request.title.c_str(),
-                    request.body.c_str(), static_cast<char*>(nullptr));
+            ::execl("/usr/bin/notify-send",
+                    "notify-send",
+                    "-a",
+                    request.app_name.c_str(),
+                    "-u",
+                    urgency_str,
+                    "-t",
+                    timeout_str.c_str(),
+                    request.title.c_str(),
+                    request.body.c_str(),
+                    static_cast<char*>(nullptr));
             ::_exit(127);
         }
         if (pid > 0) {
@@ -61,4 +71,4 @@ core::Result<bool> send_notification(const NotificationRequest& request) {
     return core::Result<bool>::success(true);
 }
 
-} // namespace hyggshios::application
+}  // namespace hyggshios::application

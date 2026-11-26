@@ -44,7 +44,7 @@ int map_error(hyggshios::core::ErrorCode code) noexcept {
     }
 }
 
-} // namespace
+}  // namespace
 
 extern "C" {
 
@@ -236,4 +236,4 @@ int hapi_send_notification(const char* app_name, const char* title, const char* 
     return res.ok() ? HAPI_OK : map_error(res.error().code);
 }
 
-} // extern "C"
+}  // extern "C"

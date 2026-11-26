@@ -1,8 +1,9 @@
 #include <HAPI/system/process_info.hpp>
 
 #if defined(__linux__)
-#include "linux/linux_adapters.hpp"
 #include <unistd.h>
+
+#include "linux/linux_adapters.hpp"
 #endif
 
 namespace hyggshios::system {
@@ -49,4 +50,4 @@ std::vector<ProcessInfo> list_processes() {
     return res.ok() ? std::move(res).value() : std::vector<ProcessInfo>{};
 }
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system

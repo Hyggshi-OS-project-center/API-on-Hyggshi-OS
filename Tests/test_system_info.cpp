@@ -147,7 +147,7 @@ void test_live_linux_system_apis() {
 #endif
 }
 
-} // namespace
+}  // namespace
 
 int main() {
     test_parse_cpuinfo();

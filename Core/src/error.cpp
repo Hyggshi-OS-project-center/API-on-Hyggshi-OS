@@ -26,4 +26,4 @@ std::string_view to_string(ErrorCode code) noexcept {
     return "Unknown";
 }
 
-} // namespace hyggshios::core
+}  // namespace hyggshios::core

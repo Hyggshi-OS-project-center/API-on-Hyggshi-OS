@@ -12,6 +12,6 @@ namespace hyggshios::core {
 /// Semantic version string of the Hyggshi OS API library.
 inline constexpr std::string_view kApiVersion = "0.1.0";
 
-} // namespace hyggshios::core
+}  // namespace hyggshios::core
 
 namespace hyggshi = hyggshios;

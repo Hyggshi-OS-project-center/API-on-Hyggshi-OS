@@ -108,9 +108,7 @@ HAPI_C_EXPORT int hapi_file_read_text(const char* path,
                                       size_t* out_len);
 HAPI_C_EXPORT int hapi_file_write_text(const char* path, const char* content);
 
-HAPI_C_EXPORT int hapi_send_notification(const char* app_name,
-                                         const char* title,
-                                         const char* body);
+HAPI_C_EXPORT int hapi_send_notification(const char* app_name, const char* title, const char* body);
 
 #ifdef __cplusplus
 }

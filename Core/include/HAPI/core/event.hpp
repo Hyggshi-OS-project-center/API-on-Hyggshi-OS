@@ -10,9 +10,10 @@ namespace hyggshios::core {
 
 /// Generic event payload dispatched through EventBus.
 struct Event {
-    std::string topic;   ///< Event topic (e.g., "file.changed", "app.started", "system.notification")
-    std::string source;  ///< Emitter identifier
-    std::string payload; ///< Optional serialized payload or message
+    std::string
+        topic;  ///< Event topic (e.g., "file.changed", "app.started", "system.notification")
+    std::string source;   ///< Emitter identifier
+    std::string payload;  ///< Optional serialized payload or message
     std::uint64_t timestamp_ms{0};
 };
 
@@ -21,7 +22,7 @@ using SubscriptionId = std::uint64_t;
 
 /// Thread-safe publish/subscribe event bus for Core, System, and Application events.
 class EventBus {
-public:
+   public:
     EventBus();
     ~EventBus();
 
@@ -40,11 +41,11 @@ public:
     /// Returns the shared process-wide EventBus instance.
     static EventBus& global();
 
-private:
+   private:
     struct Impl;
     std::unique_ptr<Impl> impl_;
 };
 
-} // namespace hyggshios::core
+}  // namespace hyggshios::core
 
 namespace hyggshi = hyggshios;

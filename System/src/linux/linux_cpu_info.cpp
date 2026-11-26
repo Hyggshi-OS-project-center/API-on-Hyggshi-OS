@@ -1,14 +1,15 @@
-#include "linux_adapters.hpp"
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 
 #include <cstdlib>
 #include <cstring>
 #include <set>
 #include <string>
-#include <unistd.h>
 #include <utility>
+
+#include <unistd.h>
+
+#include "linux_adapters.hpp"
+#include "linux_common.hpp"
 
 namespace hyggshios::system {
 
@@ -30,8 +31,9 @@ CpuInfo parse_cpuinfo(std::string_view content) {
     std::size_t start = 0;
     while (start <= content.size()) {
         const std::size_t end = content.find('\n', start);
-        const std::string_view line = detail::trim_ws(
-            end == std::string_view::npos ? content.substr(start) : content.substr(start, end - start));
+        const std::string_view line =
+            detail::trim_ws(end == std::string_view::npos ? content.substr(start)
+                                                          : content.substr(start, end - start));
 
         if (line.empty()) {
             flush_core_ids();
@@ -119,8 +121,8 @@ core::Result<CpuInfo> query_linux_cpu_info() {
     if (info.frequency_mhz == 0.0) {
         std::string freq_text;
         int freq_err = 0;
-        if (read_file_text("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", freq_text,
-                           freq_err)) {
+        if (read_file_text(
+                "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", freq_text, freq_err)) {
             std::uint64_t khz = 0;
             if (parse_int(freq_text, khz)) {
                 info.frequency_mhz = static_cast<double>(khz) / 1000.0;
@@ -131,5 +133,5 @@ core::Result<CpuInfo> query_linux_cpu_info() {
     return core::Result<CpuInfo>::success(std::move(info));
 }
 
-} // namespace detail
-} // namespace hyggshios::system
+}  // namespace detail
+}  // namespace hyggshios::system

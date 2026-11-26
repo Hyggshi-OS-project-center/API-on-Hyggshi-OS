@@ -47,6 +47,6 @@ struct SessionSecurityInfo {
 [[nodiscard]] core::Result<SessionSecurityInfo> try_get_session_info();
 [[nodiscard]] core::SecurityPolicy get_security_policy();
 
-} // namespace hyggshios::system::security
+}  // namespace hyggshios::system::security
 
 namespace hyggshi = hyggshios;

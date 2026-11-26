@@ -1,5 +1,3 @@
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 #include <HAPI/system/software_api.hpp>
 
@@ -8,6 +6,8 @@
 #include <set>
 #include <sstream>
 #include <string>
+
+#include "linux_common.hpp"
 
 namespace fs = std::filesystem;
 
@@ -29,8 +29,9 @@ std::vector<InstalledPackage> parse_dpkg_status(std::string_view content, std::s
     std::size_t start = 0;
     while (start <= content.size()) {
         const std::size_t end = content.find('\n', start);
-        const std::string_view line = detail::trim_ws(
-            end == std::string_view::npos ? content.substr(start) : content.substr(start, end - start));
+        const std::string_view line =
+            detail::trim_ws(end == std::string_view::npos ? content.substr(start)
+                                                          : content.substr(start, end - start));
 
         if (line.empty()) {
             flush();
@@ -147,10 +148,10 @@ core::Result<std::vector<SharedLibraryInfo>> try_list_loaded_libraries() {
 
     std::vector<SharedLibraryInfo> libs;
     libs.reserve(unique_paths.size());
-    for (auto& p : unique_paths) {
+    for (const auto& p : unique_paths) {
         libs.push_back(SharedLibraryInfo{p});
     }
     return core::Result<std::vector<SharedLibraryInfo>>::success(std::move(libs));
 }
 
-} // namespace hyggshios::system::software
+}  // namespace hyggshios::system::software

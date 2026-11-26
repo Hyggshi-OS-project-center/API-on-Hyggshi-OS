@@ -167,7 +167,7 @@ void test_c_abi() {
     assert(hapi_get_os_info(nullptr) == HAPI_ERR_INVALID_ARG);
 }
 
-} // namespace
+}  // namespace
 
 int main() {
     test_platform_and_events();

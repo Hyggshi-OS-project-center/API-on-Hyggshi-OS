@@ -7,11 +7,7 @@
 namespace hyggshios::application {
 
 /// Urgency level for desktop notifications.
-enum class NotificationUrgency {
-    Low,
-    Normal,
-    Critical
-};
+enum class NotificationUrgency { Low, Normal, Critical };
 
 /// Desktop notification request.
 struct NotificationRequest {
@@ -26,6 +22,6 @@ struct NotificationRequest {
 /// notify-send if available in a graphical session).
 [[nodiscard]] core::Result<bool> send_notification(const NotificationRequest& request);
 
-} // namespace hyggshios::application
+}  // namespace hyggshios::application
 
 namespace hyggshi = hyggshios;

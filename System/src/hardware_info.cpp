@@ -23,4 +23,4 @@ HardwareInfo get_hardware_info() {
     return res.ok() ? std::move(res).value() : HardwareInfo{};
 }
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system

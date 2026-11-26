@@ -56,6 +56,6 @@ struct BootInfo {
 /// Returns all environment variables visible to the current process.
 [[nodiscard]] std::unordered_map<std::string, std::string> list_env();
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system
 
 namespace hyggshi = hyggshios;

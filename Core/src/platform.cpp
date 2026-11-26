@@ -32,4 +32,4 @@ PlatformInfo get_platform_info() {
     return info;
 }
 
-} // namespace hyggshios::core
+}  // namespace hyggshios::core

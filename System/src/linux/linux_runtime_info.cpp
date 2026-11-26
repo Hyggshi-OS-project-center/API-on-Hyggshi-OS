@@ -1,5 +1,3 @@
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 #include <HAPI/system/runtime_info.hpp>
 
@@ -9,9 +7,10 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+
 #include <unistd.h>
 
-extern char** environ;
+#include "linux_common.hpp"
 
 namespace hyggshios::system {
 
@@ -20,7 +19,7 @@ namespace {
 std::string format_tm(const std::tm& tm_val) {
     char buf[32]{};
     std::strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S", &tm_val);
-    return std::string(buf);
+    return {buf};
 }
 
 std::string get_env_or_empty(const char* key) {
@@ -28,7 +27,7 @@ std::string get_env_or_empty(const char* key) {
     return val != nullptr ? std::string(val) : std::string{};
 }
 
-} // namespace
+}  // namespace
 
 core::Result<UptimeInfo> try_get_uptime_info() {
     if (!core::has_permission(core::Permission::SystemInfoRead)) {
@@ -79,7 +78,8 @@ core::Result<TimeInfo> try_get_time_info() {
     info.unix_timestamp_sec = static_cast<std::int64_t>(now_c);
     info.iso8601_utc = format_tm(utc_tm) + "Z";
     info.iso8601_local = format_tm(local_tm);
-    info.timezone = local_tm.tm_zone != nullptr ? std::string(local_tm.tm_zone) : std::string("UTC");
+    info.timezone =
+        local_tm.tm_zone != nullptr ? std::string(local_tm.tm_zone) : std::string("UTC");
     info.utc_offset_seconds = static_cast<std::int32_t>(local_tm.tm_gmtoff);
 
     return core::Result<TimeInfo>::success(std::move(info));
@@ -165,4 +165,4 @@ std::unordered_map<std::string, std::string> list_env() {
     return out;
 }
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system

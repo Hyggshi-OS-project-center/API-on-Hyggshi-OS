@@ -1,12 +1,13 @@
-#include "linux_adapters.hpp"
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 
 #include <algorithm>
 #include <cstring>
-#include <dirent.h>
 #include <string>
+
+#include <dirent.h>
+
+#include "linux_adapters.hpp"
+#include "linux_common.hpp"
 
 namespace hyggshios::system {
 
@@ -115,11 +116,11 @@ core::Result<std::vector<ProcessInfo>> query_linux_process_list() {
     }
     ::closedir(dir);
 
-    std::sort(processes.begin(), processes.end(),
-              [](const ProcessInfo& a, const ProcessInfo& b) { return a.pid < b.pid; });
+    std::ranges::sort(processes,
+                      [](const ProcessInfo& a, const ProcessInfo& b) { return a.pid < b.pid; });
 
     return core::Result<std::vector<ProcessInfo>>::success(std::move(processes));
 }
 
-} // namespace detail
-} // namespace hyggshios::system
+}  // namespace detail
+}  // namespace hyggshios::system

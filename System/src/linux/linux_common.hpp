@@ -10,8 +10,8 @@
 namespace hyggshios::system::detail {
 
 inline std::string_view trim_ws(std::string_view sv) noexcept {
-    while (!sv.empty() && (sv.front() == ' ' || sv.front() == '\t' || sv.front() == '\r' ||
-                           sv.front() == '\n')) {
+    while (!sv.empty() &&
+           (sv.front() == ' ' || sv.front() == '\t' || sv.front() == '\r' || sv.front() == '\n')) {
         sv.remove_prefix(1);
     }
     while (!sv.empty() &&
@@ -57,4 +57,4 @@ inline bool parse_leading_int(std::string_view sv, IntT& out) noexcept {
     return ec == std::errc{};
 }
 
-} // namespace hyggshios::system::detail
+}  // namespace hyggshios::system::detail

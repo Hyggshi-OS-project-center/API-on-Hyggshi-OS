@@ -1,14 +1,15 @@
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 #include <HAPI/system/security_api.hpp>
 
 #include <cstdlib>
 #include <cstring>
+#include <sstream>
+
 #include <grp.h>
 #include <pwd.h>
-#include <sstream>
 #include <unistd.h>
+
+#include "linux_common.hpp"
 
 namespace hyggshios::system::security {
 
@@ -151,4 +152,4 @@ core::SecurityPolicy get_security_policy() {
     return core::active_security_policy();
 }
 
-} // namespace hyggshios::system::security
+}  // namespace hyggshios::system::security

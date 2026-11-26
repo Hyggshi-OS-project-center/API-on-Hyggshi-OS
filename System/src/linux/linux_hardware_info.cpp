@@ -1,9 +1,9 @@
-#include "linux_adapters.hpp"
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 
 #include <string>
+
+#include "linux_adapters.hpp"
+#include "linux_common.hpp"
 
 namespace hyggshios::system {
 
@@ -71,7 +71,7 @@ std::string read_dmi_attr(const char* filename) {
     return {};
 }
 
-} // namespace
+}  // namespace
 
 core::Result<HardwareInfo> query_linux_hardware_info() {
     if (!core::has_permission(core::Permission::HardwareInfoRead)) {
@@ -99,5 +99,5 @@ core::Result<HardwareInfo> query_linux_hardware_info() {
     return core::Result<HardwareInfo>::success(std::move(info));
 }
 
-} // namespace detail
-} // namespace hyggshios::system
+}  // namespace detail
+}  // namespace hyggshios::system

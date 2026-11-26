@@ -64,6 +64,6 @@ struct InterfaceStats {
 [[nodiscard]] ProxyConfig get_proxy_config();
 [[nodiscard]] core::Result<std::vector<InterfaceStats>> try_get_statistics();
 
-} // namespace hyggshios::system::network
+}  // namespace hyggshios::system::network
 
 namespace hyggshi = hyggshios;

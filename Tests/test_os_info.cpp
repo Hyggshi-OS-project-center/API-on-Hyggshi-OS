@@ -84,7 +84,7 @@ void test_live_linux_os_info() {
 #endif
 }
 
-} // namespace
+}  // namespace
 
 int main() {
     test_parse_hyggshi_os_release();

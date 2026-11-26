@@ -1,9 +1,9 @@
-#include "linux_adapters.hpp"
-
 #include <HAPI/core/permissions.hpp>
 
 #include <cstdlib>
 #include <string>
+
+#include "linux_adapters.hpp"
 
 namespace hyggshios::system::detail {
 
@@ -14,7 +14,7 @@ std::string get_env_str(const char* name) {
     return val != nullptr ? std::string(val) : std::string{};
 }
 
-} // namespace
+}  // namespace
 
 core::Result<DesktopInfo> query_linux_desktop_info() {
     if (!core::has_permission(core::Permission::SystemInfoRead)) {
@@ -108,10 +108,10 @@ core::Result<DesktopSettings> query_linux_desktop_settings() {
         run_gsettings("gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null");
     settings.wallpaper_uri =
         run_gsettings("gsettings get org.gnome.desktop.background picture-uri 2>/dev/null");
-    settings.panel_position =
-        run_gsettings("gsettings get org.gnome.shell.extensions.dash-to-dock dock-position 2>/dev/null");
+    settings.panel_position = run_gsettings(
+        "gsettings get org.gnome.shell.extensions.dash-to-dock dock-position 2>/dev/null");
 
     return core::Result<DesktopSettings>::success(std::move(settings));
 }
 
-} // namespace hyggshios::system::detail
+}  // namespace hyggshios::system::detail

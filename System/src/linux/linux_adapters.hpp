@@ -22,4 +22,4 @@ namespace hyggshios::system::detail {
 [[nodiscard]] core::Result<DesktopSettings> query_linux_desktop_settings();
 [[nodiscard]] core::Result<HardwareInfo> query_linux_hardware_info();
 
-} // namespace hyggshios::system::detail
+}  // namespace hyggshios::system::detail

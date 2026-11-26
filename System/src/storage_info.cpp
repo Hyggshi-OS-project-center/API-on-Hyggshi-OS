@@ -24,4 +24,4 @@ StorageInfo get_storage_info(bool include_pseudo) {
     return res.ok() ? std::move(res).value() : StorageInfo{};
 }
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system

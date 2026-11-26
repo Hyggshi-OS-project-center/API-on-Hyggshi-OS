@@ -35,4 +35,4 @@ core::Result<DesktopSettings> try_get_desktop_settings() {
 #endif
 }
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system

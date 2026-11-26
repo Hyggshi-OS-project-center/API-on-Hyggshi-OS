@@ -6,9 +6,11 @@
 #include <cstring>
 #include <fstream>
 #include <sstream>
-#include <sys/utsname.h>
-#include <unistd.h>
 #include <unordered_map>
+
+#include <unistd.h>
+
+#include <sys/utsname.h>
 
 namespace hyggshios::system {
 
@@ -74,7 +76,7 @@ bool read_file_to_string(const char* path, std::string& out, int& err_no) {
     return true;
 }
 
-} // namespace
+}  // namespace
 
 OsInfo parse_os_release(std::string_view content) {
     std::unordered_map<std::string, std::string> fields;
@@ -82,8 +84,9 @@ OsInfo parse_os_release(std::string_view content) {
     std::size_t start = 0;
     while (start <= content.size()) {
         const std::size_t end = content.find('\n', start);
-        const std::string_view line = trim_whitespace(
-            end == std::string_view::npos ? content.substr(start) : content.substr(start, end - start));
+        const std::string_view line =
+            trim_whitespace(end == std::string_view::npos ? content.substr(start)
+                                                          : content.substr(start, end - start));
 
         if (!line.empty() && line.front() != '#') {
             const std::size_t eq = line.find('=');
@@ -174,5 +177,5 @@ hyggshios::core::Result<OsInfo> query_linux_os_info() {
     return hyggshios::core::Result<OsInfo>::success(std::move(info));
 }
 
-} // namespace detail
-} // namespace hyggshios::system
+}  // namespace detail
+}  // namespace hyggshios::system

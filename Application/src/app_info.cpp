@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
+
 #include <unistd.h>
 
 namespace fs = std::filesystem;
@@ -53,7 +54,7 @@ DesktopAppEntry parse_desktop_file(const fs::path& path) {
     return entry;
 }
 
-} // namespace
+}  // namespace
 
 core::Result<AppInfo> try_get_current_app() {
     AppInfo info;
@@ -110,4 +111,4 @@ core::Result<std::vector<DesktopAppEntry>> try_list_installed_apps(std::size_t m
     return core::Result<std::vector<DesktopAppEntry>>::success(std::move(apps));
 }
 
-} // namespace hyggshios::application
+}  // namespace hyggshios::application

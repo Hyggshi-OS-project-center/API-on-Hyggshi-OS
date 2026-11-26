@@ -19,11 +19,7 @@ struct FileStat {
 };
 
 /// File change event kinds emitted by watch().
-enum class WatchEventKind {
-    Modified,
-    Deleted,
-    Created
-};
+enum class WatchEventKind { Modified, Deleted, Created };
 
 using WatchCallback = std::function<void(const std::string& path, WatchEventKind kind)>;
 
@@ -47,6 +43,6 @@ using WatchCallback = std::function<void(const std::string& path, WatchEventKind
                                                      std::uint64_t last_mtime_ns,
                                                      WatchCallback callback);
 
-} // namespace hyggshios::system::file
+}  // namespace hyggshios::system::file
 
 namespace hyggshi = hyggshios;

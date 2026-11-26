@@ -1,5 +1,3 @@
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 #include <HAPI/system/hardware_devices.hpp>
 
@@ -7,6 +5,8 @@
 #include <filesystem>
 #include <sstream>
 #include <string>
+
+#include "linux_common.hpp"
 
 namespace fs = std::filesystem;
 
@@ -46,7 +46,7 @@ bool is_card_dir(const std::string& name) {
     return true;
 }
 
-} // namespace
+}  // namespace
 
 core::Result<std::vector<GpuDevice>> try_get_gpu_devices() {
     if (!core::has_permission(core::Permission::HardwareInfoRead)) {
@@ -293,4 +293,4 @@ core::Result<std::vector<SensorReading>> try_get_sensor_readings() {
     return core::Result<std::vector<SensorReading>>::success(std::move(readings));
 }
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system

@@ -81,4 +81,4 @@ core::Result<ServiceInfo> try_get_service_status(const std::string& unit_name) {
     });
 }
 
-} // namespace hyggshios::services
+}  // namespace hyggshios::services

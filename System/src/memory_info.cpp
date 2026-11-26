@@ -23,4 +23,4 @@ MemoryInfo get_memory_info() {
     return res.ok() ? std::move(res).value() : MemoryInfo{};
 }
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system

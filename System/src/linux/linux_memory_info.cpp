@@ -1,10 +1,10 @@
-#include "linux_adapters.hpp"
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 
 #include <cstring>
 #include <string>
+
+#include "linux_adapters.hpp"
+#include "linux_common.hpp"
 
 namespace hyggshios::system {
 
@@ -15,8 +15,9 @@ MemoryInfo parse_meminfo(std::string_view content) {
     std::size_t start = 0;
     while (start <= content.size()) {
         const std::size_t end = content.find('\n', start);
-        const std::string_view line = detail::trim_ws(
-            end == std::string_view::npos ? content.substr(start) : content.substr(start, end - start));
+        const std::string_view line =
+            detail::trim_ws(end == std::string_view::npos ? content.substr(start)
+                                                          : content.substr(start, end - start));
 
         const std::size_t colon = line.find(':');
         if (colon != std::string_view::npos) {
@@ -90,5 +91,5 @@ core::Result<MemoryInfo> query_linux_memory_info() {
     return core::Result<MemoryInfo>::success(parse_meminfo(content));
 }
 
-} // namespace detail
-} // namespace hyggshios::system
+}  // namespace detail
+}  // namespace hyggshios::system

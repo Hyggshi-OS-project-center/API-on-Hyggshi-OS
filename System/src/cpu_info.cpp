@@ -23,4 +23,4 @@ CpuInfo get_cpu_info() {
     return res.ok() ? std::move(res).value() : CpuInfo{};
 }
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system

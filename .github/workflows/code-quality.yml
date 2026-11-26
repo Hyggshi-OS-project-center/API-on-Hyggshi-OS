@@ -49,7 +49,6 @@ jobs:
           clang-tidy \
             -p build \
             --warnings-as-errors='*' \
-            --checks='-*,readability-*,modernize-*,performance-*,bugprone-*,clang-analyzer-*,-readability-magic-numbers,-readability-function-cognitive-complexity,-modernize-use-trailing-return-type' \
             $FILES
 
   # ─────────────────────────────────────────────

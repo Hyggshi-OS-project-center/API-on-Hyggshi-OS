@@ -29,6 +29,6 @@ struct DesktopAppEntry {
 [[nodiscard]] core::Result<std::vector<DesktopAppEntry>> try_list_installed_apps(
     std::size_t max_count = 100);
 
-} // namespace hyggshios::application
+}  // namespace hyggshios::application
 
 namespace hyggshi = hyggshios;

@@ -105,7 +105,8 @@ core::Result<bool> write_bytes(const std::string& path, const std::vector<std::u
             errno,
         });
     }
-    ofs.write(reinterpret_cast<const char*>(data.data()), static_cast<std::streamsize>(data.size()));
+    ofs.write(reinterpret_cast<const char*>(data.data()),
+              static_cast<std::streamsize>(data.size()));
     if (ofs.fail()) {
         return core::Result<bool>::failure({
             core::ErrorCode::IoError,
@@ -242,4 +243,4 @@ core::Result<std::uint32_t> watch_once(const std::string& path,
     return core::Result<std::uint32_t>::success(0);
 }
 
-} // namespace hyggshios::system::file
+}  // namespace hyggshios::system::file

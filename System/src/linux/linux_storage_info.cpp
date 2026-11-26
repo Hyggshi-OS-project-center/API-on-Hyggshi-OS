@@ -1,13 +1,15 @@
-#include "linux_adapters.hpp"
-#include "linux_common.hpp"
-
 #include <HAPI/core/permissions.hpp>
 
+#include <algorithm>
 #include <array>
 #include <cstring>
 #include <sstream>
 #include <string>
+
 #include <sys/statvfs.h>
+
+#include "linux_adapters.hpp"
+#include "linux_common.hpp"
 
 namespace hyggshios::system {
 
@@ -15,17 +17,13 @@ namespace {
 
 bool is_pseudo_filesystem(std::string_view fs) noexcept {
     static constexpr std::array<std::string_view, 22> kPseudoFs = {
-        "proc",      "sysfs",    "devtmpfs", "devpts",    "tmpfs",       "cgroup",
-        "cgroup2",   "pstore",   "bpf",      "tracefs",   "debugfs",     "securityfs",
-        "configfs",  "fusectl",  "hugetlbfs","mqueue",    "autofs",      "efivarfs",
-        "binfmt_misc","nsfs",    "ramfs",    "squashfs",
+        "proc",        "sysfs",   "devtmpfs",  "devpts",   "tmpfs",   "cgroup",
+        "cgroup2",     "pstore",  "bpf",       "tracefs",  "debugfs", "securityfs",
+        "configfs",    "fusectl", "hugetlbfs", "mqueue",   "autofs",  "efivarfs",
+        "binfmt_misc", "nsfs",    "ramfs",     "squashfs",
     };
-    for (const auto candidate : kPseudoFs) {
-        if (fs == candidate) {
-            return true;
-        }
-    }
-    return false;
+    return std::ranges::any_of(kPseudoFs,
+                               [fs](std::string_view candidate) { return fs == candidate; });
 }
 
 std::string unescape_mount_path(std::string_view raw) {
@@ -61,7 +59,7 @@ std::string unescape_mount_path(std::string_view raw) {
     return out;
 }
 
-} // namespace
+}  // namespace
 
 std::vector<StorageDevice> parse_proc_mounts(std::string_view content, bool include_pseudo) {
     std::vector<StorageDevice> mounts;
@@ -69,20 +67,21 @@ std::vector<StorageDevice> parse_proc_mounts(std::string_view content, bool incl
     std::size_t start = 0;
     while (start <= content.size()) {
         const std::size_t end = content.find('\n', start);
-        const std::string_view line = detail::trim_ws(
-            end == std::string_view::npos ? content.substr(start) : content.substr(start, end - start));
+        const std::string_view line =
+            detail::trim_ws(end == std::string_view::npos ? content.substr(start)
+                                                          : content.substr(start, end - start));
 
         if (!line.empty()) {
             std::istringstream iss{std::string(line)};
             std::string dev;
             std::string mnt;
-            std::string fs;
-            if (iss >> dev >> mnt >> fs) {
-                if (include_pseudo || !is_pseudo_filesystem(fs)) {
+            std::string fs_type;
+            if (iss >> dev >> mnt >> fs_type) {
+                if (include_pseudo || !is_pseudo_filesystem(fs_type)) {
                     StorageDevice entry;
                     entry.device = std::move(dev);
                     entry.mount_point = unescape_mount_path(mnt);
-                    entry.filesystem = std::move(fs);
+                    entry.filesystem = std::move(fs_type);
                     mounts.push_back(std::move(entry));
                 }
             }
@@ -124,18 +123,18 @@ core::Result<StorageInfo> query_linux_storage_info(bool include_pseudo) {
     for (auto& mount : info.mounts) {
         struct statvfs vfs{};
         if (::statvfs(mount.mount_point.c_str(), &vfs) == 0) {
-            const std::uint64_t block_size =
-                vfs.f_frsize > 0 ? static_cast<std::uint64_t>(vfs.f_frsize)
-                                 : static_cast<std::uint64_t>(vfs.f_bsize);
+            const std::uint64_t block_size = vfs.f_frsize > 0
+                                                 ? static_cast<std::uint64_t>(vfs.f_frsize)
+                                                 : static_cast<std::uint64_t>(vfs.f_bsize);
             mount.total_bytes = static_cast<std::uint64_t>(vfs.f_blocks) * block_size;
             mount.free_bytes = static_cast<std::uint64_t>(vfs.f_bfree) * block_size;
             mount.available_bytes = static_cast<std::uint64_t>(vfs.f_bavail) * block_size;
             mount.used_bytes =
                 mount.total_bytes >= mount.free_bytes ? (mount.total_bytes - mount.free_bytes) : 0;
             if (mount.total_bytes > 0) {
-                mount.usage_percent =
-                    (static_cast<double>(mount.used_bytes) / static_cast<double>(mount.total_bytes)) *
-                    100.0;
+                mount.usage_percent = (static_cast<double>(mount.used_bytes) /
+                                       static_cast<double>(mount.total_bytes)) *
+                                      100.0;
             }
         }
     }
@@ -143,5 +142,5 @@ core::Result<StorageInfo> query_linux_storage_info(bool include_pseudo) {
     return core::Result<StorageInfo>::success(std::move(info));
 }
 
-} // namespace detail
-} // namespace hyggshios::system
+}  // namespace detail
+}  // namespace hyggshios::system

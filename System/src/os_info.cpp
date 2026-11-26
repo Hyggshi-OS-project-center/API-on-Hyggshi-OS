@@ -26,4 +26,4 @@ OsInfo get_os_info() {
     return OsInfo{};
 }
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system

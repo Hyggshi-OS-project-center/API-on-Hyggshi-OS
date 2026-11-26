@@ -17,8 +17,8 @@ struct InstalledPackage {
 
 /// Detected system package managers.
 struct PackageManagerInfo {
-    std::string primary;            ///< e.g., "apt", "dpkg", "pacman", "dnf", "unknown"
-    std::vector<std::string> available; ///< All detected package manager binaries
+    std::string primary;                 ///< e.g., "apt", "dpkg", "pacman", "dnf", "unknown"
+    std::vector<std::string> available;  ///< All detected package manager binaries
 };
 
 /// Loaded shared library entry from /proc/self/maps.
@@ -35,6 +35,6 @@ struct SharedLibraryInfo {
 [[nodiscard]] PackageManagerInfo get_package_manager_info();
 [[nodiscard]] core::Result<std::vector<SharedLibraryInfo>> try_list_loaded_libraries();
 
-} // namespace hyggshios::system::software
+}  // namespace hyggshios::system::software
 
 namespace hyggshi = hyggshios;

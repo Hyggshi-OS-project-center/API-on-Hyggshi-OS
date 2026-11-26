@@ -1,4 +1,5 @@
 #include <hapi_c.h>
+
 #include <stdio.h>
 
 int main(void) {
@@ -81,9 +82,7 @@ int main(void) {
         if (hapi_file_read_text(path, buf, sizeof(buf), &out_len) == HAPI_OK) {
             printf("Wrote and read back: %s", buf);
         }
-        hapi_file_exists(path)
-            ? printf("File exists: yes\n")
-            : printf("File exists: no\n");
+        hapi_file_exists(path) ? printf("File exists: yes\n") : printf("File exists: no\n");
     }
 
     return 0;

@@ -8,11 +8,11 @@ namespace hyggshios::system {
 
 /// Desktop environment and graphical session metadata.
 struct DesktopInfo {
-    std::string desktop_environment; ///< Desktop name (e.g., "GNOME", "KDE", "Hyprland")
-    std::string session_type;        ///< Session protocol (e.g., "wayland", "x11", "tty")
-    std::string display;             ///< Display socket/identifier (e.g., "wayland-0", ":0")
-    std::string locale;              ///< Active system locale (e.g., "en_US.UTF-8")
-    bool is_graphical{false};        ///< True if a graphical display session is active
+    std::string desktop_environment;  ///< Desktop name (e.g., "GNOME", "KDE", "Hyprland")
+    std::string session_type;         ///< Session protocol (e.g., "wayland", "x11", "tty")
+    std::string display;              ///< Display socket/identifier (e.g., "wayland-0", ":0")
+    std::string locale;               ///< Active system locale (e.g., "en_US.UTF-8")
+    bool is_graphical{false};         ///< True if a graphical display session is active
 };
 
 /// Desktop theme, wallpaper, and UI appearance settings.
@@ -33,6 +33,6 @@ struct DesktopSettings {
 /// Retrieves desktop theme, wallpaper, and appearance settings (best-effort).
 [[nodiscard]] core::Result<DesktopSettings> try_get_desktop_settings();
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system
 
 namespace hyggshi = hyggshios;

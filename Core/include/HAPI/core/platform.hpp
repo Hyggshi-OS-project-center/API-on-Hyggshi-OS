@@ -5,12 +5,7 @@
 namespace hyggshios::core {
 
 /// Supported host platform targets for Platform Adapters.
-enum class PlatformType {
-    Linux,
-    Windows,
-    Web,
-    Unknown
-};
+enum class PlatformType { Linux, Windows, Web, Unknown };
 
 /// Metadata describing the active platform adapter and build target.
 struct PlatformInfo {
@@ -24,6 +19,6 @@ struct PlatformInfo {
 /// Returns compile-time / runtime platform adapter metadata.
 [[nodiscard]] PlatformInfo get_platform_info();
 
-} // namespace hyggshios::core
+}  // namespace hyggshios::core
 
 namespace hyggshi = hyggshios;

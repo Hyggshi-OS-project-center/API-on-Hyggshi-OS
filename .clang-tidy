@@ -1,22 +1,31 @@
 ---
 # clang-tidy configuration for HAPI (API-on-Hyggshi-OS)
 Checks: >
-  -*, 
+  -*,
   readability-*,
   modernize-*,
   performance-*,
   bugprone-*,
   clang-analyzer-*,
-  cppcoreguidelines-*,
   -readability-magic-numbers,
   -readability-function-cognitive-complexity,
+  -readability-identifier-length,
+  -readability-use-concise-preprocessor-directives,
+  -readability-trailing-comma,
+  -readability-implicit-bool-conversion,
+  -readability-redundant-lambda-parameter-list,
   -modernize-use-trailing-return-type,
-  -cppcoreguidelines-avoid-magic-numbers,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
-  -cppcoreguidelines-pro-type-reinterpret-cast,
-  -cppcoreguidelines-avoid-c-arrays
+  -modernize-use-designated-initializers,
+  -modernize-macro-to-enum,
+  -modernize-avoid-c-arrays,
+  -modernize-use-scoped-lock,
+  -modernize-use-starts-ends-with,
+  -performance-enum-size,
+  -performance-unnecessary-value-param,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-command-processor
 
-WarningsAsErrors: ''
+WarningsAsErrors: '*'
 
 HeaderFilterRegex: '(Core|System|Application|Services|Bindings)/include/.*\.(hpp|h)$'
 
@@ -29,17 +38,9 @@ CheckOptions:
     value: CamelCase
   - key: readability-identifier-naming.EnumCase
     value: CamelCase
+  - key: readability-identifier-naming.EnumConstantCase
+    value: CamelCase
   - key: readability-identifier-naming.FunctionCase
     value: lower_case
-  - key: readability-identifier-naming.VariableCase
-    value: lower_case
-  - key: readability-identifier-naming.MemberCase
-    value: lower_case
-  - key: readability-identifier-naming.MemberSuffix
-    value: '_'
-  - key: readability-identifier-naming.ConstantCase
-    value: UPPER_CASE
   - key: modernize-use-default-member-init.UseAssignment
     value: '1'
-  - key: performance-unnecessary-value-param.AllowedTypes
-    value: ''

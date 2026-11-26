@@ -11,7 +11,7 @@ namespace hyggshios::core {
 /// Lightweight result container holding either a value of type T or an Error.
 template <typename T>
 class Result {
-public:
+   public:
     static Result success(T value) { return Result(std::move(value)); }
     static Result failure(Error error) { return Result(std::move(error)); }
 
@@ -52,13 +52,13 @@ public:
         return ok() ? std::get<T>(data_) : std::move(fallback);
     }
 
-private:
+   private:
     explicit Result(T value) : data_(std::move(value)) {}
     explicit Result(Error error) : data_(std::move(error)) {}
 
     std::variant<T, Error> data_;
 };
 
-} // namespace hyggshios::core
+}  // namespace hyggshios::core
 
 namespace hyggshi = hyggshios;

@@ -11,12 +11,12 @@ namespace hyggshios::system {
 
 /// Metadata and resource usage for a running process.
 struct ProcessInfo {
-    std::int32_t pid{0};            ///< Process ID
-    std::int32_t ppid{0};           ///< Parent process ID
-    std::string name;               ///< Executable / process name
-    std::string state;              ///< Single-letter or descriptive state (e.g., "R", "S")
-    std::uint64_t memory_rss_kb{0}; ///< Resident Set Size (VmRSS) in KiB
-    std::uint32_t threads{0};       ///< Number of threads in the process
+    std::int32_t pid{0};             ///< Process ID
+    std::int32_t ppid{0};            ///< Parent process ID
+    std::string name;                ///< Executable / process name
+    std::string state;               ///< Single-letter or descriptive state (e.g., "R", "S")
+    std::uint64_t memory_rss_kb{0};  ///< Resident Set Size (VmRSS) in KiB
+    std::uint32_t threads{0};        ///< Number of threads in the process
 };
 
 /// Parses Linux /proc/<pid>/status formatted text into a ProcessInfo struct.
@@ -34,6 +34,6 @@ struct ProcessInfo {
 /// Lists active processes visible on the host (best-effort on failure).
 [[nodiscard]] std::vector<ProcessInfo> list_processes();
 
-} // namespace hyggshios::system
+}  // namespace hyggshios::system
 
 namespace hyggshi = hyggshios;

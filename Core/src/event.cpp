@@ -68,4 +68,4 @@ EventBus& EventBus::global() {
     return instance;
 }
 
-} // namespace hyggshios::core
+}  // namespace hyggshios::core

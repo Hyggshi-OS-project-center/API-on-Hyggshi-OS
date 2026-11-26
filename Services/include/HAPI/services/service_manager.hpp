@@ -22,6 +22,6 @@ struct ServiceInfo {
 /// Queries status for a specific systemd service by unit name.
 [[nodiscard]] core::Result<ServiceInfo> try_get_service_status(const std::string& unit_name);
 
-} // namespace hyggshios::services
+}  // namespace hyggshios::services
 
 namespace hyggshi = hyggshios;

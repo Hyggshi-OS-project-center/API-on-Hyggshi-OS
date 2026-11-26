@@ -31,6 +31,6 @@ struct Error {
     explicit operator bool() const noexcept { return !is_ok(); }
 };
 
-} // namespace hyggshios::core
+}  // namespace hyggshios::core
 
 namespace hyggshi = hyggshios;

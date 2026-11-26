@@ -36,8 +36,8 @@ int main() {
 
     std::cout << "=== Storage Information ===\n";
     for (const auto& m : storage.mounts) {
-        std::cout << m.mount_point << " (" << m.filesystem << "): "
-                  << (m.used_bytes / (1024ULL * 1024ULL * 1024ULL)) << " / "
+        std::cout << m.mount_point << " (" << m.filesystem
+                  << "): " << (m.used_bytes / (1024ULL * 1024ULL * 1024ULL)) << " / "
                   << (m.total_bytes / (1024ULL * 1024ULL * 1024ULL)) << " GiB ("
                   << std::setprecision(1) << m.usage_percent << "%)\n";
     }
